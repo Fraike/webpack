@@ -1,0 +1,12 @@
+/* 通用 */
+.ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.center{
+    flex: 1;
+}
+.none{
+    display: none;
+}

@@ -7,14 +7,14 @@ module.exports = env => {
     }
     case 'prod':
     case 'production': {
-      webpackConfig = require('./config/webpack.prod.config')
+      webpackConfig = require('./config/webpack.prod.conf')
       break
     }
     case 'dev':
     case 'development':
     default: {
-      webpackConfig = require('./config/webpack.dev.config')
+      webpackConfig = require('./config/webpack.dev.conf')
     }
   }
   return webpackConfig
-} 
+}

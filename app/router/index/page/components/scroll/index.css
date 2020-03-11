@@ -1,0 +1,15 @@
+.scrollStyleY{
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+.scrollStyleX{
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+.scrollStyleX>div{
+  display: flex;
+  flex-wrap: nowrap;
+}

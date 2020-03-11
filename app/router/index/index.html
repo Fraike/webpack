@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover">
+  <meta name="x5-orientation" content="portrait" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="format-detection" content="telephone=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>demo</title>
+</head>
+
+<body>
+  <div id="main"></div>
+  <script type="text/javascript" src="<%= htmlWebpackPlugin.options.title %>"></script>
+  <script>
+    var serverData = {
+            // 1 为主页面，2 为充值页面
+            main: 1,
+            inapp_info: true,
+            isAnchor: false,
+            app: 1,
+            current_stage: 3,
+            current_daytype: 3,
+            overTime: 500,
+            overTime1: 10,
+            anchor: {
+                mc_uid: '123',
+                mc_source: '123',
+            },
+            user_data: null,
+            // 用户常规参数
+            user_info: {
+                source: '2',
+                source_id: '164405409837257477'
+            },
+            giftBtnState: [1, 0, 0, 0, 0, 0, 0],
+            token: '9e28e2d25a8c04b64dc955dfa331aa0b'
+        }
+  </script>
+</body>
+
+</html>

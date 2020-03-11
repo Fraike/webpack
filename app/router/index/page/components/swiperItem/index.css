@@ -1,0 +1,25 @@
+.main{
+  position: relative;
+}
+.bg{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
+.none{
+  display: none;
+}
+.swiperContainer{
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+}
+.swiperContent{
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+}

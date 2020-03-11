@@ -1,0 +1,39 @@
+.none{
+  display: none;
+}
+.toast{
+  position: fixed;
+  bottom: 500rpx;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.text{
+  display: inline-block;
+  padding: 8rpx 16rpx;
+  max-width: 500rpx;
+  border-radius: 10rpx;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 24rpx;
+  font-family: PingFangSC-Medium;
+}
+.up{
+  animation: big 0.3s forwards;
+}
+.down{
+  animation: small 0.3s forwards;
+}
+@keyframes big{
+  from {transform: scale(0,0);}
+  to {transform: scale(1,1);}
+}
+@keyframes small{
+  from { transform: scale(1,1); }
+  to { transform: scale(0,0);}
+}
+.test{
+  color: #333333;
+}
