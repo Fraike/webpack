@@ -1,8 +1,435 @@
-.scroll{
-  position: relative;
-  overflow: hidden;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  width: 100%;
-  height: 100%;
+.scroll {
+    position: relative;
+    overflow: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    height: 100%;
 }
+
+.color_blank{
+    position: fixed;
+    z-index: -1;
+    top: 0;
+    width: 100%;
+    height: 780rpx;
+    background-color: #01a3c6;
+}
+
+.head {
+    width: 750rpx;
+    height: 780rpx;
+    background-image: url("~@/images/index/head_bg.png");
+    background-size: 100% 100%;
+}
+
+.master {
+    position: relative;
+    width: 750rpx;
+    height: 516rpx;
+    margin-top: -230rpx;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    background-image: url("~@/images/index/leizhu_bg.png");
+    background-size: 100% 100%;
+}
+
+.master_box_header{
+    position: absolute;
+    width: 488rpx;
+    height: 140rpx;
+    top: 44rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    background-image: url("~@/images/index/master_title.png");
+    background-size: 100% 100%;
+}
+
+.master_box {
+    width: 620rpx;
+    height: 406rpx;
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*flex-direction: column;*/
+    box-sizing: border-box;
+    background-image: linear-gradient(180deg, #F1833E 0%, #E84229 100%);
+    border: 10rpx solid #FFC051;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.master_rule{
+    margin-top: 64rpx;
+    font-family: PingFangSC-Medium;
+    font-size: 28rpx;
+    color: #FCECB5;
+    text-align: center;
+}
+
+.master_avatar{
+    width: 160rpx;
+    height: 160rpx;
+    margin: 14rpx auto;
+    position: relative;
+    border: 4rpx solid #FF9E00;
+    border-radius: 50%;
+}
+
+.master_avatar::after{
+    position: absolute;
+    bottom: -10rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    content: 'LIVE';
+    width: 76rpx;
+    height: 28rpx;
+    line-height: 28rpx;
+    background: #FFC051;
+    border-radius: 16rpx;
+    font-family: PingFangHK-Semibold;
+    font-size: 20rpx;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.master_name{
+    font-family: PingFangSC-Medium;
+    font-size: 28rpx;
+    color: #FFFFFF;
+}
+
+.master_score{
+    font-family: PingFangSC-Medium;
+    font-size: 28rpx;
+    color: #FCECB5;
+    text-align: center;
+}
+
+.begin_text{
+    margin: 80rpx 0;
+    font-family: PingFangSC-Medium;
+    font-size: 30rpx;
+    color: #fff;
+    text-align: center;
+}
+
+.robPoints{
+    position: relative;
+    width: 700rpx;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 66rpx auto;
+    padding: 0 20rpx 30rpx;
+    background: #FE9602;
+    border: 10rpx solid #FFC051;
+    border-radius: 40rpx;
+}
+
+.robPoints_header{
+    position: absolute;
+    width: 452rpx;
+    height: 112rpx;
+    top: -52rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    background-image: url("~@/images/index/robPoints_title.png");
+    background-size: 100% 100%;
+}
+
+.ring_header {
+    composes: robPoints_header;
+    background-image: url("~@/images/index/ring_title.png");
+}
+
+.robPoints_countDown{
+    margin-top: 60rpx;
+    font-family: PingFangSC-Semibold;
+    font-size: 36rpx;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.robPoints_countDown_time {
+    display: inline-block;
+    width: 130rpx;
+    text-align: left;
+}
+
+.robPoints_rule{
+    font-family: PingFangSC-Semibold;
+    font-size: 28rpx;
+    color: #f9e8b4;
+    text-align: center;
+    line-height: 50rpx;
+}
+
+.robPoints_splitLine{
+    width: 640rpx;
+    height: 2rpx;
+    margin-top: 10rpx;
+    background-image: linear-gradient(270deg, rgba(252,236,181,0.00) 0%, #FCECB5 50%, rgba(252,236,181,0.00) 100%);
+}
+
+.list_header{
+    width: 610rpx;
+    margin: 20rpx 0 20rpx;
+    padding: 0 40rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list_header span {
+    font-family: PingFangSC-Medium;
+    font-size: 28rpx;
+    color: #FCECB5;
+}
+
+.anchor{
+    margin-left: 100rpx;
+}
+
+.blank{
+    flex: 1;
+}
+
+.robPoints_list{
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    max-height: 1000rpx;
+    width: 100%;
+    font-family: PingFangSC-Medium;
+}
+
+.robPoints_list_item_wrapper{
+    margin-bottom: 24rpx;
+    box-sizing: border-box;
+    padding: 4rpx;
+    border: 2rpx solid #FFFFFF;
+    border-radius: 20rpx;
+
+}
+
+.robPoints_list_item_wrapper:last-child{
+    margin-bottom:0
+}
+
+.robPoints_list_item{
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 24rpx 34rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 16rpx;
+    background: #fff;
+}
+
+.anchor_rank{
+    width: 96rpx;
+    font-size: 24rpx;
+    color: #EE3D18;
+    text-align: left;
+}
+
+.anchor_avatar{
+    position: relative;
+    width: 84rpx;
+    height: 84rpx;
+    margin-left: 24rpx;
+    margin-right: 16rpx;
+    box-sizing: border-box;
+    border-radius: 50%;
+    border: 4rpx solid #FF9E00;
+}
+
+.anchor_avatar::after{
+    position: absolute;
+    bottom: -14rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    content: 'LIVE';
+    width: 76rpx;
+    height: 28rpx;
+    line-height: 28rpx;
+    background: #FFC051;
+    border-radius: 16rpx;
+    font-size: 20rpx;
+    color: #FFFFFF;
+    text-align: center;
+}
+
+.anchor_avatar image{
+    width: 100%;
+    height: 100%;
+}
+
+.anchor_name{
+    flex: 1;
+    font-size: 24rpx;
+    color: #DE8200;
+}
+
+.anchor_points{
+    font-size: 24rpx;
+    color: #EE3D18;
+    text-align: right;
+}
+
+.ringRank{
+    composes: robPoints
+}
+
+.ringRank_header_single{
+    position: absolute;
+    width: 332rpx;
+    height: 112rpx;
+    top: -52rpx;
+    left: 14rpx;
+    background-image: url("~@/images/index/ring_single.png");
+    background-size: 100% 100%;
+}
+
+.ringRank_header_single_active {
+    background-image: url("~@/images/index/ring_single_active.png");
+}
+
+
+.ringRank_header_all{
+    composes:ringRank_header_single;
+    background-image: url("~@/images/index/ring_all.png");
+    left: unset;
+    right: 14rpx;
+}
+
+.ringRank_header_all_active{
+    background-image: url("~@/images/index/ring_all_active.png");
+}
+
+.ringRank_rule{
+    composes: robPoints_rule;
+    margin-top: 60rpx;
+}
+
+.rule_btn{
+    position: fixed;
+    top: 100rpx;
+    right: 0;
+    z-index: 2;
+    width: 88rpx;
+    height:88rpx;
+    background-image: url("~@/images/index/rule_btn.png");
+    background-size: 100% 100%;
+}
+
+.rule_btn:active{
+    transform: scale(0.9);
+    transform-origin: center right;
+}
+
+.mask_wrapper{
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    height: 1000rpx;
+}
+
+.rule_time_box{
+    width: 616rpx;
+    height: 92rpx;
+    line-height: 92rpx;
+    background-image: linear-gradient(180deg, #F1833E 0%, #E84229 100%);
+    border: 6rpx solid #FFC051;
+    padding: 0 32rpx;
+    border-radius: 20rpx;
+    text-align: left;
+    font-size: 24rpx;
+    color: #FFFFFF;
+    font-family: PingFangSC-Medium;
+}
+
+.rule_box {
+    width: 680rpx;
+    display: flex;
+    flex-direction: column;
+    border: 6rpx solid #FFC051;
+    overflow: hidden;
+    border-radius: 20rpx;
+    margin-top: 20rpx;
+    font-family: PingFangSC-Medium;
+}
+
+.rule_header{
+    width: 100%;
+    padding: 18rpx 0;
+    background-image: linear-gradient(180deg, #FFBA00 0%, #FD8403 100%);
+    border-bottom: 6rpx solid #FFC051;
+    text-align: center;
+    font-size: 32rpx;
+    color: #FFFFFF;
+}
+
+.rule_content{
+    padding: 16rpx 0;
+    background-image: linear-gradient(180deg, #F1833E 0%, #E84229 100%);
+}
+
+.rule_item{
+    display: flex;
+    margin: 12rpx 32rpx;
+}
+
+.rule_item span {
+    color: #FFE75C ;
+}
+
+.rule_num{
+    position: relative;
+    top: 5rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24rpx;
+    height: 24rpx;
+    border-radius: 50%;
+    background-color: #FFB202;
+    color: #FFFFFF;
+    text-align: center;
+    font-size: 20rpx;
+    font-family: PingFangSC-Medium;
+}
+
+.rule_text{
+    margin-left: 16rpx;
+    width: 576rpx;
+    color: #FFFFFF;
+    text-align: justify;
+    font-size: 24rpx;
+    font-family: PingFangSC-Medium;
+    line-height: 36rpx;
+}
+
+.score_table1{
+    width: 616rpx;
+    height: 220rpx;
+    margin: 12rpx auto;
+    background-image: url("~@/images/index/table1.png");
+    background-size: 100% 100%;
+}
+
+.score_table2{
+    composes: score_table1;
+    height: 176rpx;
+    background-image: url("~@/images/index/table2.png");
+}
+
+.score_table3{
+    composes: score_table1;
+    height: 308rpx;
+    background-image: url("~@/images/index/table3.png");
+}
+
+

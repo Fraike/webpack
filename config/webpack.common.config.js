@@ -4,6 +4,7 @@ const webpack = require('webpack')
 
 const nodeModuleDir = path.resolve(process.cwd(), 'node_module')
 const appDir = path.resolve(process.cwd(), 'app')
+const resolve = dir => path.resolve(__dirname, dir);
 
 const config = {
   entry: {},
@@ -24,6 +25,11 @@ const config = {
       manifest: require('../dll/dll.manifest.json')
     }),
   ],
+  resolve: {
+    alias: {
+      '@': appDir
+    }
+  },
   module: {
     rules: [{
       test: /\.(js)$/,

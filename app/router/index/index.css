@@ -12,7 +12,8 @@ body, html {
   overflow: hidden;
   width: 100%;
   height: 100%;
-  background-color: rgb(86, 30, 5);
+  background-color: #E84229;
+  box-sizing: border-box;
 }
 :global #main {
   width: 100%;

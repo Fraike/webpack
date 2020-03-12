@@ -98,3 +98,16 @@ const clone = parent => {
     return _clone(parent)
 }
 
+export const padValue = (val) => {
+    val = Math.abs(val)
+    if (val < 10) {
+        return '0' + val
+    } else {
+        return val
+    }
+}
+
+// export const getCurrentTime = (date,)=>{
+//     date.setHours()
+// }
+
