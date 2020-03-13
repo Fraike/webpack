@@ -1,7 +1,8 @@
 import style from './index.css'
-import React, {memo, useEffect, useRef, useState} from 'react'
-import {Mask, Toast} from './components'
-import {padValue} from "../../../utils/tool";
+import React, {useEffect, useState} from 'react'
+import {Mask} from './components'
+import {padValue} from "@/utils/tool";
+import { goLive, goIndex} from "@/utils/goto";
 
 
 const mock_robPoints = [
@@ -32,84 +33,147 @@ const mock_robPoints = [
     },
 ]
 
-const master_box_status = ['抢分赛将于14：00开启','抢分赛进行中，积分TOP1主播将成为擂主']
+const master_box_status = ['抢分赛将于14：00开启', '抢分赛进行中，积分TOP1主播将成为擂主']
 
-const roundTime1 = (new Date()).setHours(14,0,0,0)
-const roundTime2 = (new Date()).setHours(17,0,0,0)
-const roundTime3 = (new Date()).setHours(20,0,0,0)
-const roundTime4 = (new Date()).setHours(23,0,0,0)
+const today = new Date()
 
-const hour = 1 * 60 * 60 *1000
+const roundTime1 = today.setHours(14, 0, 0, 0)
+const roundTime2 = today.setHours(17, 0, 0, 0)
+const roundTime3 = today.setHours(20, 0, 0, 0)
+const roundTime4 = today.setHours(23, 0, 0, 0)
+
+const hour = 1 * 60 * 60 * 1000
 
 const Main = () => {
     const [rankStatus, setRankStatus] = useState('single')
     const [mask, setMask] = useState('')
-    const [robPointStart,setRobPointsStart] = useState(false)
-    const [ringStart,setRingStart] = useState(false)
-    const [nowTime,setNowTime] = useState(Date.now())
-    const [countTime,setCountTime ] = useState('00:00')
+    const [robPointStart, setRobPointsStart] = useState(false)
+    const [ringStart, setRingStart] = useState(false)
+    const [nowTime, setNowTime] = useState(Date.now())
+    const [ masterScore,setMasterScore] = useState('')
 
-    useEffect(()=>{
-        // console.log('14:00',(new Date()).setHours(14,0,0,0))
-        // let timer = setInterval(()=>{
-        //     setNowTime(Date.now())
-        //     // console.log('ss',Date.now())
-        // },1000)
-        // return ()=>{
-        //     clearInterval(timer)
-        // }
-        if(nowTime>roundTime1){
+    const [ robPointsRankList,setRobPointsRankList] = useState([])
+    const [ ringRankSingleList,setRingRankSingleList] = useState([])
+    const [ ringRankAllList,setRingRankAllList] = useState([])
+
+    const handleGotoLive = (platform_id, source, uid, live, notjumpst) => {
+        if (notjumpst || !serverData.inapp_info || serverData.isAnchor || platform_id === '0' || source === '0' || uid === '0') {
+            return
+        }
+        const args = { uid, source, platform_id }
+        // 直播间
+        if (live === 1) {
+            goLive(args)
+        }
+        else {
+            goIndex(args)
+        }
+    }
+
+
+    useEffect(() => {
+        if (nowTime > roundTime1) {
             setRobPointsStart(true)
         }
-        if(nowTime>roundTime1 + hour && nowTime < roundTime2){
-            setRingStart(true)
-            console.log('2')
-        }
-        if(nowTime>roundTime2 + hour && nowTime < roundTime3){
-            console.log('3')
+        if (nowTime > roundTime1 + hour && nowTime < roundTime2) {
             setRingStart(true)
         }
-        if(nowTime>roundTime3 + hour && nowTime < roundTime4) {
+        if (nowTime > roundTime2 + hour && nowTime < roundTime3) {
             setRingStart(true)
         }
-        if(nowTime>roundTime4 + hour){
+        if (nowTime > roundTime3 + hour && nowTime < roundTime4) {
             setRingStart(true)
+        }
+        if (nowTime > roundTime4 + hour) {
+            setRingStart(true)
+        }
+    }, [])
+
+    const getRobPointsRankList = () => {
+        // 请求后台接口
+        setRobPointsRankList(serverData.robPointsRank)
+    }
+
+    const getRingRankSingleList = () => {
+        setRingRankSingleList(serverData.ringRank_single)
+    }
+
+    const getRingRankAllList = () => {
+        setRingRankAllList(serverData.ringRank_all)
+    }
+
+    const getMaterScore = () => {
+        setMasterScore('999999')
+    }
+
+    useEffect(()=>{
+        getRobPointsRankList()
+        getRingRankSingleList()
+        getRingRankAllList()
+    },[])
+
+    useEffect(()=>{
+        getMaterScore()
+        let timer = setInterval(()=>{
+            getMaterScore()
+        },1000)
+        return ()=>{
+            clearInterval(timer)
         }
     },[])
 
 
     const renderCountTime = () => {
-        const [ time,setTime] = useState({minute:'00',second:'00'})
-        useEffect(()=>{
-            let timer = setInterval(()=>{
-                setNowTime(Date.now())
-                let diffTime =  nowTime - roundTime1
-                setTime({
-                    minute: padValue(parseInt((diffTime / 1000 / 60) % 60)),
-                    second: padValue(parseInt((diffTime / 1000) % 60))
-                })
-            },1000)
-            return ()=>{
-                clearInterval(timer)
+        const [time, setTime] = useState({minute: '00', second: '00'})
+        useEffect(() => {
+            let timer
+            if(robPointStart){
+               timer = setInterval(() => {
+                    setNowTime(Date.now())
+                    let diffTime = nowTime - (roundTime1 + hour )
+                    setTime({
+                        minute: padValue(parseInt((diffTime / 1000 / 60) % 60)),
+                        second: padValue(parseInt((diffTime / 1000) % 60))
+                    })
+                }, 1000)
             }
-        },[time])
+            return () => {
+                timer && clearInterval(timer)
+            }
+        }, [robPointStart,time])
 
         return (
-            <span className={style.robPoints_countDown}>倒计时：<div className={style.robPoints_countDown_time}>{time.minute+ '：'+time.second}</div></span>
+            <>
+                <div className={style.robPoints_countDown}>倒计时：<div
+                    className={style.robPoints_countDown_time}>{time.minute + '：' + time.second}</div>
+                </div>
+            </>
         )
     }
 
 
-    const renderList = () => {
+    const renderList = (props) => {
         return (
             <div className={style.robPoints_list}>
+                { Object.keys(serverData.current_anchor).length !==0 && <div className={style.robPoints_list_item_wrapper}>
+                    <div className={style.robPoints_list_item}>
+                        <span className={style.anchor_rank}>NO.{serverData.current_anchor.rank}</span>
+                        <div className={style.anchor_avatar}>
+                            <img src={serverData.current_anchor.avatar} alt=""/>
+                        </div>
+                        <span className={`${style.anchor_name} ellipsis`}>{serverData.current_anchor.name}</span>
+                        <span className={style.anchor_points}>{serverData.current_anchor.score}</span>
+                    </div>
+                </div>}
                 {
-                    mock_robPoints.map(item => {
+                    props.map(item => {
                         return (
                             <div className={style.robPoints_list_item_wrapper}>
                                 <div className={style.robPoints_list_item}>
                                     <span className={style.anchor_rank}>NO.{item.rank}</span>
-                                    <div className={style.anchor_avatar}></div>
+                                    <div className={style.anchor_avatar}>
+                                        <img src={item.avatar} alt=""/>
+                                    </div>
                                     <span className={`${style.anchor_name} ellipsis`}>{item.name}</span>
                                     <span className={style.anchor_points}>{item.point}</span>
                                 </div>
@@ -134,9 +198,11 @@ const Main = () => {
                             robPointStart &&
                             (
                                 <>
-                                    <div className={style.master_avatar}></div>
-                                    <div className={style.master_name}>一条小团团OvO</div>
-                                    <div className={style.master_score}>887888分</div>
+                                    <div className={style.master_avatar}>
+                                        <img src={serverData.master_info.avatar} alt=""/>
+                                    </div>
+                                    <div className={style.master_name}>{serverData.master_info.name}</div>
+                                    <div className={style.master_score}>{masterScore}分</div>
                                 </>
                             )
                         }
@@ -146,9 +212,9 @@ const Main = () => {
                     </div>
                 </div>
                 <div className={style.robPoints}>
-                    <div className={ringStart?style.ring_header:style.robPoints_header}></div>
+                    <div className={ringStart ? style.ring_header : style.robPoints_header}></div>
                     {renderCountTime()}
-                    <span className={style.robPoints_rule}>积分TOP1主播将成为擂主</span>
+                    <span className={style.robPoints_rule}>{ ringStart ? '积分高于擂主的积分即可成为新擂主':'积分TOP1主播将成为擂主' }</span>
                     <div className={style.robPoints_splitLine}></div>
                     <div className={style.list_header}>
                         <span>排名</span>
@@ -156,8 +222,8 @@ const Main = () => {
                         <span className={style.blank}></span>
                         <span>积分</span>
                     </div>
-                    { robPointStart && renderList()}
-                    { !robPointStart && <div className={style.begin_text}>抢分赛将于14：00开启</div>}
+                    {robPointStart && renderList(robPointsRankList)}
+                    {!robPointStart && <div className={style.begin_text}>抢分赛将于14：00开启</div>}
                 </div>
 
                 <div className={style.ringRank}>
@@ -177,8 +243,9 @@ const Main = () => {
                         className={`${rankStatus === 'all' ? style.ringRank_header_all_active : ''} ${style.ringRank_header_all}`}
                         onClick={() => setRankStatus('all')}
                     ></div>
-                    { ringStart && renderList()}
-                    { !ringStart && <div className={style.begin_text}>暂无数据</div>}
+                    {ringStart && rankStatus === 'single' && renderList(ringRankSingleList)}
+                    {ringStart && rankStatus === 'all' && renderList(ringRankAllList)}
+                    {!ringStart && <div className={style.begin_text}>暂无数据</div>}
                 </div>
 
                 <div
@@ -196,7 +263,7 @@ const Main = () => {
                             <div className={style.rule_item}>
                                 <div className={style.rule_num}>1</div>
                                 <div
-                                    className={style.rule_text}> <span>每天分为四个轮次，每3小时一个轮次</span>(14:00-17:00、17:00-20:00、20:00-23:00、23:00-02:00)
+                                    className={style.rule_text}><span>每天分为四个轮次，每3小时一个轮次</span>(14:00-17:00、17:00-20:00、20:00-23:00、23:00-02:00)
                                 </div>
                             </div>
                             <div className={style.rule_item}>
@@ -236,7 +303,8 @@ const Main = () => {
                             <div className={style.rule_item}>
                                 <div className={style.rule_num}>1</div>
                                 <div
-                                    className={style.rule_text}>抢擂台时间为抢分赛之后的两个小时，即每天15:00-17:00、18:00-20:00、 21:00-23:00、00:00-02:00
+                                    className={style.rule_text}>抢擂台时间为抢分赛之后的两个小时，即每天15:00-17:00、18:00-20:00、
+                                    21:00-23:00、00:00-02:00
                                 </div>
                             </div>
                             <div className={style.rule_item}>
@@ -314,8 +382,6 @@ const Main = () => {
                     </div>
                 </div>
             </Mask>
-
-            <Toast/>
         </>
     )
 }
