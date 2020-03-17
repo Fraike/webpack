@@ -3,37 +3,7 @@ import React, {useEffect, useState} from 'react'
 import {Mask} from './components'
 import {padValue} from "@/utils/tool";
 import { goLive, goIndex} from "@/utils/goto";
-
-
-const mock_robPoints = [
-    {
-        rank: '20+',
-        name: 'wwt',
-        point: 9999
-    },
-    {
-        rank: 1,
-        name: 'wwt',
-        point: 9999
-    },
-    {
-        rank: 1,
-        name: 'wwt',
-        point: 9999
-    },
-    {
-        rank: 1,
-        name: 'wwt',
-        point: 9999
-    },
-    {
-        rank: 1,
-        name: 'wwt',
-        point: 9999
-    },
-]
-
-const master_box_status = ['抢分赛将于14：00开启', '抢分赛进行中，积分TOP1主播将成为擂主']
+import {useFetch} from "@/utils/userHook";
 
 const today = new Date()
 
@@ -47,10 +17,13 @@ const hour = 1 * 60 * 60 * 1000
 const Main = () => {
     const [rankStatus, setRankStatus] = useState('single')
     const [mask, setMask] = useState('')
-    const [robPointStart, setRobPointsStart] = useState(false)
-    const [ringStart, setRingStart] = useState(false)
+
+    const [ isInStage, setIsinStage] = useState(false)
+    const [ stage, setStage] = useState(0)
+
     const [nowTime, setNowTime] = useState(Date.now())
-    const [ masterScore,setMasterScore] = useState('')
+    const [endTime, setEndTime] = useState(null)
+    const [ master, setMaster] = useState({})
 
     const [ robPointsRankList,setRobPointsRankList] = useState([])
     const [ ringRankSingleList,setRingRankSingleList] = useState([])
@@ -72,80 +45,108 @@ const Main = () => {
 
 
     useEffect(() => {
-        if (nowTime > roundTime1) {
-            setRobPointsStart(true)
+        if( nowTime > roundTime1 && nowTime < roundTime1 + hour){
+            setEndTime(roundTime1 + hour)
+        }else if(nowTime > roundTime1 + hour && nowTime < roundTime2){
+            setEndTime(roundTime2)
+        }else if(nowTime > roundTime2 && nowTime < roundTime2 + hour){
+            setEndTime(roundTime2 + hour)
+        }else if(nowTime > roundTime2 + hour && nowTime < roundTime3){
+            setEndTime(roundTime3)
+        }else if(nowTime > roundTime3  && nowTime < roundTime3 + hour){
+            setEndTime(roundTime3 + hour)
+        }else if( nowTime > roundTime3 + hour && nowTime < roundTime4){
+            setEndTime(roundTime4)
+        }else if(nowTime > roundTime4 && nowTime < roundTime4 + hour){
+            setEndTime(roundTime4 + hour)
+        }else {
+            setEndTime(roundTime4 + 3 * hour)
         }
-        if (nowTime > roundTime1 + hour && nowTime < roundTime2) {
-            setRingStart(true)
-        }
-        if (nowTime > roundTime2 + hour && nowTime < roundTime3) {
-            setRingStart(true)
-        }
-        if (nowTime > roundTime3 + hour && nowTime < roundTime4) {
-            setRingStart(true)
-        }
-        if (nowTime > roundTime4 + hour) {
-            setRingStart(true)
-        }
+
     }, [])
 
-    const getRobPointsRankList = () => {
-        // 请求后台接口
-        setRobPointsRankList(serverData.robPointsRank)
-    }
+    const fetchData = async () => {
+        const res = await useFetch({
+            url: '/v1/activity/rmxspringarenarank',
+            method: 'GET',
+            query: {
+                mc_uid: serverData.anchor.mc_uid,
+                mc_source: serverData.anchor.mc_source,
+                source_id: serverData.anchor.mc_uid || 0,
+                source: serverData.anchor.mc_source || 0,
+                token: serverData.token || 0,
+                ts: serverData.ts,
+                sdk: serverData.sdk,
+                app_ver: serverData.app_ver,
+                sys: serverData.sys,
+                app: serverData.app
+            }
+        })
+        if (res.err === 0) {
+            const {
+                is_in_stage,
+                stage,
+                arena_winner,
+                stage_rank,
+                daily_rank,
+                arenapoint_rank,
+                mc_stage_rank_data,
+                mc_daily_rank_data,
+                mc_rank_data
+            } = res
 
-    const getRingRankSingleList = () => {
-        setRingRankSingleList(serverData.ringRank_single)
-    }
+            if(res.err === 0){
+                setIsinStage( is_in_stage === 1)
+                setStage(stage)
+                setMaster(arena_winner)
+                if(mc_stage_rank_data){
+                    stage_rank.unshift(mc_stage_rank_data)
+                }
+                if(mc_daily_rank_data){
+                    daily_rank.unshift(mc_daily_rank_data)
+                }
+                if(mc_rank_data){
+                    arenapoint_rank.unshift(mc_rank_data)
+                }
+                setRobPointsRankList(stage_rank)
+                setRingRankSingleList(daily_rank)
+                setRingRankAllList(arenapoint_rank)
+            }
 
-    const getRingRankAllList = () => {
-        setRingRankAllList(serverData.ringRank_all)
-    }
-
-    const getMaterScore = () => {
-        setMasterScore('999999')
-    }
-
-    useEffect(()=>{
-        getRobPointsRankList()
-        getRingRankSingleList()
-        getRingRankAllList()
-    },[])
-
-    useEffect(()=>{
-        getMaterScore()
-        let timer = setInterval(()=>{
-            getMaterScore()
-        },1000)
-        return ()=>{
-            clearInterval(timer)
         }
-    },[])
+    }
 
+    useEffect(()=>{
+        fetchData()
+    },[])
 
     const renderCountTime = () => {
-        const [time, setTime] = useState({minute: '00', second: '00'})
+        const [time, setTime] = useState({ hour: '00', minute: '00', second: '00'})
         useEffect(() => {
             let timer
-            if(robPointStart){
+            if(isInStage){
                timer = setInterval(() => {
                     setNowTime(Date.now())
-                    let diffTime = nowTime - (roundTime1 + hour )
+                    let diffTime = endTime - nowTime
                     setTime({
+                        hour: padValue(parseInt((diffTime / 1000 / 60 / 60) % 60)),
                         minute: padValue(parseInt((diffTime / 1000 / 60) % 60)),
                         second: padValue(parseInt((diffTime / 1000) % 60))
                     })
+                   if(time.second === '00'){
+                       fetchData()
+                   }
                 }, 1000)
             }
             return () => {
                 timer && clearInterval(timer)
             }
-        }, [robPointStart,time])
+        }, [isInStage,time])
 
         return (
             <>
                 <div className={style.robPoints_countDown}>倒计时：<div
-                    className={style.robPoints_countDown_time}>{time.minute + '：' + time.second}</div>
+                    className={style.robPoints_countDown_time}>{ time.hour + ':' + time.minute + ':' + time.second}</div>
                 </div>
             </>
         )
@@ -155,27 +156,17 @@ const Main = () => {
     const renderList = (props) => {
         return (
             <div className={style.robPoints_list}>
-                { Object.keys(serverData.current_anchor).length !==0 && <div className={style.robPoints_list_item_wrapper}>
-                    <div className={style.robPoints_list_item}>
-                        <span className={style.anchor_rank}>NO.{serverData.current_anchor.rank}</span>
-                        <div className={style.anchor_avatar}>
-                            <img src={serverData.current_anchor.avatar} alt=""/>
-                        </div>
-                        <span className={`${style.anchor_name} ellipsis`}>{serverData.current_anchor.name}</span>
-                        <span className={style.anchor_points}>{serverData.current_anchor.score}</span>
-                    </div>
-                </div>}
                 {
                     props.map(item => {
                         return (
                             <div className={style.robPoints_list_item_wrapper}>
                                 <div className={style.robPoints_list_item}>
                                     <span className={style.anchor_rank}>NO.{item.rank}</span>
-                                    <div className={style.anchor_avatar}>
-                                        <img src={item.avatar} alt=""/>
+                                    <div className={`${style.anchor_avatar} ${item.live === 1 && style.anchor_avatar_live}`}>
+                                        <img src={item.headurl} alt=""/>
                                     </div>
                                     <span className={`${style.anchor_name} ellipsis`}>{item.name}</span>
-                                    <span className={style.anchor_points}>{item.point}</span>
+                                    <span className={style.anchor_points}>{item.num}</span>
                                 </div>
                             </div>
                         )
@@ -195,26 +186,29 @@ const Main = () => {
                     <div className={style.master_box}>
                         <div className={style.master_rule}>每停留1分钟得10擂主分</div>
                         {
-                            robPointStart &&
+                            stage === 2 &&
                             (
                                 <>
-                                    <div className={style.master_avatar}>
-                                        <img src={serverData.master_info.avatar} alt=""/>
+                                    <div className={`${style.master_avatar} ${master.live === 1 && style.master_avatar_live}`}>
+                                        <img src={master.headurl} alt=""/>
                                     </div>
-                                    <div className={style.master_name}>{serverData.master_info.name}</div>
-                                    <div className={style.master_score}>{masterScore}分</div>
+                                    <div className={style.master_name}>{master.name}</div>
+                                    <div className={style.master_score}>{master.num}分</div>
                                 </>
                             )
                         }
                         {
-                            !robPointStart && <div className={style.begin_text}>抢分赛将于14：00开启</div>
+                            !isInStage && <div className={style.begin_text}>抢分赛将于14：00开启</div>
+                        }
+                        {
+                            stage === 1 && <div className={style.begin_text}>抢分赛进行中，积分TOP1主播将成为擂主</div>
                         }
                     </div>
                 </div>
                 <div className={style.robPoints}>
-                    <div className={ringStart ? style.ring_header : style.robPoints_header}></div>
+                    <div className={stage === 2 ? style.ring_header : style.robPoints_header}></div>
                     {renderCountTime()}
-                    <span className={style.robPoints_rule}>{ ringStart ? '积分高于擂主的积分即可成为新擂主':'积分TOP1主播将成为擂主' }</span>
+                    <span className={style.robPoints_rule}>{ stage === 2 ? '积分高于擂主的积分即可成为新擂主':'积分TOP1主播将成为擂主' }</span>
                     <div className={style.robPoints_splitLine}></div>
                     <div className={style.list_header}>
                         <span>排名</span>
@@ -222,8 +216,8 @@ const Main = () => {
                         <span className={style.blank}></span>
                         <span>积分</span>
                     </div>
-                    {robPointStart && renderList(robPointsRankList)}
-                    {!robPointStart && <div className={style.begin_text}>抢分赛将于14：00开启</div>}
+                    {isInStage && renderList(robPointsRankList)}
+                    {!isInStage && <div className={style.begin_text}>抢分赛将于14：00开启</div>}
                 </div>
 
                 <div className={style.ringRank}>
@@ -243,9 +237,9 @@ const Main = () => {
                         className={`${rankStatus === 'all' ? style.ringRank_header_all_active : ''} ${style.ringRank_header_all}`}
                         onClick={() => setRankStatus('all')}
                     ></div>
-                    {ringStart && rankStatus === 'single' && renderList(ringRankSingleList)}
-                    {ringStart && rankStatus === 'all' && renderList(ringRankAllList)}
-                    {!ringStart && <div className={style.begin_text}>暂无数据</div>}
+                    {stage === 2 && rankStatus === 'single' && renderList(ringRankSingleList)}
+                    {stage === 2 && rankStatus === 'all' && renderList(ringRankAllList)}
+                    {stage !== 2 && <div className={style.begin_text}>暂无数据</div>}
                 </div>
 
                 <div

@@ -82,7 +82,7 @@
     border-radius: 50%;
 }
 
-.master_avatar::after{
+.master_avatar_live::after{
     position: absolute;
     bottom: -10rpx;
     left: 50%;
@@ -160,7 +160,7 @@
 
 .robPoints_countDown_time {
     display: inline-block;
-    width: 130rpx;
+    width: 160rpx;
     text-align: left;
 }
 
@@ -247,7 +247,6 @@
     height: 84rpx;
     margin-left: 24rpx;
     margin-right: 16rpx;
-    box-sizing: border-box;
     border-radius: 50%;
     border: 4rpx solid #FF9E00;
 }
@@ -258,7 +257,7 @@
     border-radius: 50%;
 }
 
-.anchor_avatar::after{
+.anchor_avatar_live::after{
     position: absolute;
     bottom: -14rpx;
     left: 50%;
