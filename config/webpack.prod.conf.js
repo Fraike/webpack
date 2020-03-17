@@ -15,7 +15,7 @@ const webpack = require('webpack')
 const nodeModuleDir = path.resolve(process.cwd(), 'node_module')
 const appDir = path.resolve(process.cwd(), 'app')
 // const outputPath = path.resolve(process.cwd(), 'build')
-const outputPath = path.resolve(process.cwd(), '../../statics/activity2020/activitygirlday2020/')
+const outputPath = path.resolve(process.cwd(), 'dist')
 const assestPathName = 'assest'
 
 const { routers } = require('../router.json')
@@ -68,7 +68,7 @@ const config = webpackMerge(commonConfig, {
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({ filename: `${assestPathName}/[name].[chunkhash:5].css` }),
     new AssetsRelacePlugin([
-      path.resolve(process.cwd(), '../../../remix/templates/activity2020/activitygirlday2020/index.html'),
+      path.resolve(process.cwd(), '../../qiubai/remix-server/templates/activity2020/activityspringarena/index.html'),
     ]),
     new CopyPlugin([
       { from: path.resolve(process.cwd(), 'dll/dll.js'), to: path.join(outputPath, assestPathName) },

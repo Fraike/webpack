@@ -159,8 +159,10 @@ const Main = () => {
                 {
                     props.map(item => {
                         return (
-                            <div className={style.robPoints_list_item_wrapper}>
-                                <div className={style.robPoints_list_item}>
+                            <div className={style.robPoints_list_item_wrapper} key={item.uid}>
+                                <div className={style.robPoints_list_item}
+                                    onClick={()=>handleGotoLive(item.platform_id,item.source,item.uid,item.live,item.notjumpst)}
+                                >
                                     <span className={style.anchor_rank}>NO.{item.rank}</span>
                                     <div className={`${style.anchor_avatar} ${item.live === 1 && style.anchor_avatar_live}`}>
                                         <img src={item.headurl} alt=""/>
@@ -237,9 +239,9 @@ const Main = () => {
                         className={`${rankStatus === 'all' ? style.ringRank_header_all_active : ''} ${style.ringRank_header_all}`}
                         onClick={() => setRankStatus('all')}
                     ></div>
-                    {stage === 2 && rankStatus === 'single' && renderList(ringRankSingleList)}
-                    {stage === 2 && rankStatus === 'all' && renderList(ringRankAllList)}
-                    {stage !== 2 && <div className={style.begin_text}>暂无数据</div>}
+                    {isInStage && rankStatus === 'single' && renderList(ringRankSingleList)}
+                    {isInStage && rankStatus === 'all' && renderList(ringRankAllList)}
+                    {!isInStage && <div className={style.begin_text}>暂无数据</div>}
                 </div>
 
                 <div
